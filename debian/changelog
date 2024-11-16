@@ -1,3 +1,9 @@
+dtklog (0.0.1gxde1) UNRELEASED; urgency=medium
+
+  * 修复了在 ubuntu 下崩溃的问题
+
+ -- gfdgd_xi <3025613752@qq.com>  Sat, 16 Nov 2024 12:09:19 +0800
+
 dtklog (0.0.1) unstable; urgency=medium
 
   * release 0.0.1

@@ -13,7 +13,7 @@ DEB_CMAKE_EXTRA_FLAGS += -DCMAKE_SKIP_BUILD_RPATH=ON
 
 # Build-Profiles 控制
 BUILD_DTK5 := ON
-BUILD_DTK6 := OFF
+
 
 %:
 	dh $@

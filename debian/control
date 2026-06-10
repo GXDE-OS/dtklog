@@ -5,7 +5,7 @@ Maintainer: Deepin Packages Builder <packages@deepin.com>
 Build-Depends: debhelper-compat ( =12), pkg-config, qtbase5-private-dev, cmake, libspdlog-dev, libsystemd-dev
 Standards-Version: 3.9.8
 
-Package: libdtklog
+Package: libdtklog0
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Multi-Arch: same
@@ -14,6 +14,6 @@ Description: Simple, convinient and thread safe logger for Qt-based C++ apps.
 
 Package: libdtklog-dev
 Architecture: any
-Depends: ${shlibs:Depends}, ${misc:Depends}, libdtklog( =${binary:Version})
+Depends: ${shlibs:Depends}, ${misc:Depends}, libdtklog0( =${binary:Version})
 Description: Simple, convinient and thread safe logger for Qt-based C++ apps.
  This package contains the header files and static libraries of dlog

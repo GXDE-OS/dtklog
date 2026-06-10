@@ -1,28 +1,56 @@
 #!/usr/bin/make -f
 DPKG_EXPORT_BUILDFLAGS = 1
 include /usr/share/dpkg/default.mk
-export QT_SELECT = qt5
-export DEB_CXXFLAGS_MAINT_APPEND = -Ofast
 
-DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
+# 安全编译参数
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+export DEB_CFLAGS_MAINT_APPEND = -Wall
+export DEB_CXXFLAGS_MAINT_APPEND = -Wall
+export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed -Wl,-z,relro -Wl,-z,now -Wl,-z,noexecstack -Wl,-E
 
-VERSION = $(DEB_VERSION_UPSTREAM)
-PACK_VER = $(shell echo $(VERSION) | awk -F'[+_~-]' '{print $$1}')
+# reproducible 编译参数
+DEB_CMAKE_EXTRA_FLAGS += -DCMAKE_SKIP_BUILD_RPATH=ON
 
-# Calculate build version:
-# 5.6.8 -> 0; 5.6.8.7 -> 7; 5.6.8+u001 -> 1; 5.6.8.7+u001 -> 7; 5.6.8.0+u001 -> 0
-BUILD_VER = $(shell echo $(VERSION) | awk -F'[+_~-]' '{print $$1}' | awk -F'.' '{print $$4}' | sed 's/[^0-9]//g' | awk '{print int($$1)}')
-ifeq ($(BUILD_VER), 0)
-ifeq ($(shell expr $(shell echo "$(VERSION)" | awk -F. '{print NF-1}') '<' 3), 1)
-	BUILD_VER=$(shell echo $(VERSION) | awk -F'[+_~-]' '{print $$2}'  | sed 's/[^0-9]//g' | awk '{print int($$1)}')
-endif
-endif
+# Build-Profiles 控制
+BUILD_DTK5 := ON
+BUILD_DTK6 := OFF
 
 %:
 	dh $@
 
 override_dh_auto_configure:
-	dh_auto_configure -- -DDLOG_VERSION=$(PACK_VER) -DBUILD_WITH_SYSTEMD=ON
+ifeq ($(BUILD_DTK5),ON)
+	mkdir -p build5
+	QT_SELECT=qt5 dh_auto_configure --builddirectory=build5 -- \
+		$(DEB_CMAKE_EXTRA_FLAGS) \
+		-DBUILD_WITH_SYSTEMD=ON \
+		-DDTK5=ON
+endif
+ifeq ($(BUILD_DTK6),ON)
+	mkdir -p build6
+	dh_auto_configure --builddirectory=build6 -- \
+		$(DEB_CMAKE_EXTRA_FLAGS) \
+		-DBUILD_WITH_SYSTEMD=ON \
+		-DDTK5=OFF
+endif
 
-override_dh_makeshlibs:
-	dh_makeshlibs -V "libdtklog (>= $(shell echo $(VERSION) | cut -d '.' -f 1,2))"
+override_dh_auto_build:
+ifeq ($(BUILD_DTK5),ON)
+	QT_SELECT=qt5 dh_auto_build --builddirectory=build5
+endif
+ifeq ($(BUILD_DTK6),ON)
+	dh_auto_build --builddirectory=build6
+endif
+
+override_dh_auto_install:
+ifeq ($(BUILD_DTK5),ON)
+	QT_SELECT=qt5 dh_auto_install --builddirectory=build5
+endif
+ifeq ($(BUILD_DTK6),ON)
+	dh_auto_install --builddirectory=build6
+endif
+
+override_dh_auto_clean:
+	dh_auto_clean --builddirectory=build5
+	dh_auto_clean --builddirectory=build6
+	rm -rf build5 build6

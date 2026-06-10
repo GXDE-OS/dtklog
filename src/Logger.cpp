@@ -1,5 +1,11 @@
+// SPDX-FileCopyrightText: 2012 Boris Moiseev (cyberbobs at gmail dot com)
+// SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: LGPL-2.1-or-later
+
 /*
   Copyright (c) 2012 Boris Moiseev (cyberbobs at gmail dot com)
+  Copyright (c) 2026 UnionTech Software Technology Co., Ltd.
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Lesser General Public License version 2.1
@@ -273,14 +279,13 @@ DLOG_CORE_BEGIN_NAMESPACE
 
   Usage example:
   \code
-  class CustomClass : public QObject
+  class CustomClass
   {
-    Q_OBJECT
     dCategory("custom_category")
     ...
   };
 
-  CustomClass::CustomClass(QObject* parent) : QObject(parent)
+  CustomClass::CustomClass()
   {
     dlogger->registerAppender(new FileAppender("custom_category_log"));
     dTrace() << "Trace to the custom category log";
@@ -777,6 +782,27 @@ void Logger::registerAppender(AbstractAppender *appender)
 
 /*!
 @~english
+  @brief Unregisters the appender from the logger.
+
+  This removes the appender from the list of registered appenders.
+  The caller becomes responsible for managing the appender's lifetime.
+
+  @param[in] appender Appender to unregister
+
+  @note After unregistering, the Logger no longer owns the appender.
+        The caller must delete it manually to prevent memory leaks.
+
+  @sa registerAppender
+ */
+void Logger::unregisterAppender(AbstractAppender *appender)
+{
+    Q_D(Logger);
+    QMutexLocker locker(&d->loggerMutex);
+    d->appenders.removeOne(appender);
+}
+
+/*!
+@~english
   @brief Registers the appender to write the log records to the specific category.
 
   Calling this method, you can link some appender with the named category.
@@ -810,6 +836,28 @@ void Logger::registerCategoryAppender(const QString &category, AbstractAppender 
         d->categoryAppenders.insert(category, appender);
     else
         std::cerr << "Trying to register category [" << qPrintable(category) << "] appender that was already registered" << std::endl;
+}
+
+/*!
+@~english
+  @brief Unregisters the appender from the specific category.
+
+  This removes the appender from the list of category appenders.
+  The caller becomes responsible for managing the appender's lifetime.
+
+  @param[in] category Category name
+  @param[in] appender Appender to unregister
+
+  @note After unregistering, the Logger no longer owns the appender.
+        The caller must delete it manually to prevent memory leaks.
+
+  @sa registerCategoryAppender
+ */
+void Logger::unregisterCategoryAppender(const QString &category, AbstractAppender *appender)
+{
+    Q_D(Logger);
+    QMutexLocker locker(&d->loggerMutex);
+    d->categoryAppenders.remove(category, appender);
 }
 
 /*!
@@ -1053,7 +1101,7 @@ public:
     {
     }
 
-    Q_DECL_CONSTEXPR CuteMessageLogger(Logger *l, Logger::LogLevel, const char *,
+    Q_DECL_CONSTEXPR CuteMessageLogger(Logger *, Logger::LogLevel, const char *,
                                        int, const char *, const char *)
     {
     }
@@ -1078,4 +1126,3 @@ QDebug CuteMessageLogger::write() const
 }
 
 DLOG_CORE_END_NAMESPACE
-#include "Logger.moc"

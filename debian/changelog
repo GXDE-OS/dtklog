@@ -1,3 +1,105 @@
+dtklog (6.7.43) unstable; urgency=medium
+
+  * Release 6.7.43
+
+ -- yeshanshan <yeshanshan@uniontech.com>  Thu, 04 Jun 2026 19:35:41 +0800
+
+dtklog (6.7.42) unstable; urgency=medium
+
+  * Release 6.7.42
+
+ -- yeshanshan <yeshanshan@uniontech.com>  Wed, 20 May 2026 14:21:20 +0800
+
+dtklog (6.7.41) unstable; urgency=medium
+
+  * Release 6.7.41
+
+ -- yeshanshan <yeshanshan@uniontech.com>  Fri, 08 May 2026 13:50:40 +0800
+
+dtklog (6.7.40) unstable; urgency=medium
+
+  * Release 6.7.40
+
+ -- yeshanshan <yeshanshan@uniontech.com>  Thu, 23 Apr 2026 21:35:36 +0800
+
+dtklog (6.7.39) unstable; urgency=medium
+
+  * Release 6.7.39
+
+ -- mhduiy <zhangkun2@uniontech.com>  Thu, 09 Apr 2026 21:20:26 +0800
+
+dtklog (6.7.38) unstable; urgency=medium
+
+  * Release 6.7.38
+
+ --  yeshanshan <yeshanshan@uniontech.com>  Tue, 31 Mar 2026 11:02:14 +0800
+
+dtklog (6.7.37) unstable; urgency=medium
+
+  * Release 6.7.37
+
+ -- mhduiy <zhangkun2@uniontech.com>  Wed, 25 Mar 2026 17:05:07 +0800
+
+dtklog (6.7.36) unstable; urgency=medium
+
+  * Release 6.7.36
+
+ --  yeshanshan <yeshanshan@uniontech.com>  Thu, 12 Mar 2026 20:20:49 +0800
+
+dtklog (6.7.35) unstable; urgency=medium
+
+  * Release 6.7.35
+
+ --  yeshanshan <yeshanshan@uniontech.com>  Thu, 05 Mar 2026 17:53:36 +0800
+
+dtklog (6.7.34) unstable; urgency=medium
+
+  * Release 6.7.34
+
+ -- mhduiy <zhangkun2@uniontech.com>  Fri, 27 Feb 2026 14:59:01 +0800
+
+dtklog (6.7.33) unstable; urgency=medium
+
+  * Release 6.7.33
+
+ --  yeshanshan <yeshanshan@uniontech.com>  Thu, 05 Feb 2026 17:26:47 +0800
+
+dtklog (6.7.32) unstable; urgency=medium
+
+  * Release 6.7.32
+
+ --  yeshanshan <yeshanshan@uniontech.com>  Thu, 22 Jan 2026 16:53:09 +0800
+
+dtklog (6.7.31) unstable; urgency=medium
+
+  * Release 6.7.31
+
+ --  yeshanshan <yeshanshan@uniontech.com>  Tue, 06 Jan 2026 13:16:36 +0800
+
+dtklog (0.0.7) unstable; urgency=medium
+
+  * Release 0.0.7
+
+ --  yeshanshan <yeshanshan@uniontech.com>  Thu, 30 Oct 2025 21:34:34 +0800
+
+dtklog (0.0.6) unstable; urgency=medium
+
+  * Release 0.0.6
+
+ --  yeshanshan <packages@deepin.org>  Fri, 10 Oct 2025 17:59:13 +0800
+
+dtklog (0.0.5) unstable; urgency=medium
+
+  * Release 0.0.5
+
+ --  yeshanshan <yeshanshan@uniontech.com>  Thu, 03 Jul 2025 20:04:35 +0800
+
+dtklog (0.0.4) unstable; urgency=medium
+
+  * Release 0.0.4
+
+ -- yeshanshan <yeshanshan@uniontech.com>  Mon, 23 Jun 2025 14:52:44 +0800
+
 dtklog (0.0.3) unstable; urgency=medium
 
   * fix: resolve compilation issues on Qt 6.9

@@ -1,0 +1,34 @@
+pkgname=dtklog-git
+pkgver=6.7.43
+pkgrel=1
+pkgdesc='DTK log modules'
+arch=('x86_64' 'aarch64')
+url="https://github.com/GXDE-OS/dtklog"
+license=('LGPL-2.1-or-later')
+depends=('qt5-base' 'spdlog' 'systemd-libs')
+makedepends=('git' 'cmake' 'ninja')
+provides=("dtklog=$pkgver")
+conflicts=('dtklog')
+groups=('deepin-git')
+source=()
+sha512sums=()
+
+# 直接使用 PKGBUILD 所在的 git 仓库作为源码 ・ Build from the git checkout this PKGBUILD lives in.
+_srcroot() {
+  git -C "$startdir" rev-parse --show-toplevel
+}
+
+build() {
+  cmake -B build -S "$(_srcroot)" -GNinja \
+    -DCMAKE_BUILD_TYPE=None \
+    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_INSTALL_LIBDIR=lib \
+    -DMKSPECS_INSTALL_DIR=lib/qt/mkspecs/modules \
+    -DBUILD_WITH_SYSTEMD=ON \
+    -DDTK5=ON
+  ninja -C build
+}
+
+package() {
+  DESTDIR="$pkgdir" ninja -C build install
+}

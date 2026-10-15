@@ -7,36 +7,15 @@
 
 #include <QCoreApplication>
 #include <QElapsedTimer>
-#include <private/qobject_p.h>
 
 #include <iostream>
 
 DLOG_CORE_BEGIN_NAMESPACE
 
-class DLogHelperPrivate : public QObjectPrivate
+// Holds where and how a message is logged. It is copied into timing
+// callbacks, so it must stay a plain value type.
+struct DLogSite
 {
-public:
-    // Functions.
-    explicit DLogHelperPrivate(decltype(QObjectPrivateVersion) version = QObjectPrivateVersion)
-        : QObjectPrivate(version)
-    {
-    }
-    ~DLogHelperPrivate()
-    {
-    }
-
-    void setContext(const QMessageLogContext &ctx)
-    {
-        file = ctx.file;
-        line = ctx.line;
-        function = ctx.function;
-        category = ctx.category;
-    }
-    void setLevel(Logger::LogLevel lvl)
-    {
-        level = lvl;
-    }
-
     const char *file = nullptr;
     const char *function = nullptr;
     const char *category = nullptr;
@@ -44,11 +23,44 @@ public:
     Logger::LogLevel level = Logger::LogLevel::Debug;
 };
 
-DLogHelper::DLogHelper(Logger::LogLevel level, const QMessageLogContext &context, QObject *parent)
-    : QObject(*new DLogHelperPrivate, parent)
+// The private data lives in a child object instead of a QObjectPrivate
+// subclass, so only public Qt API is used. DLogHelper is created on the
+// caller's stack by the logging macros, so its size must stay the same as
+// QObject and a new data member cannot be added.
+class DLogHelperPrivate : public QObject
 {
-    d_func()->setContext(context);
-    d_func()->setLevel(level);
+public:
+    DLogHelperPrivate(const DLogSite &s, QObject *parent)
+        : QObject(parent)
+        , site(s)
+    {
+    }
+
+    const DLogSite site;
+};
+
+// The data object is created in the constructor as the first child.
+static const DLogSite &siteOf(const DLogHelper *helper)
+{
+    return static_cast<const DLogHelperPrivate *>(helper->children().constFirst())->site;
+}
+
+static void writeSite(const DLogSite &site, const QString &msg)
+{
+    Logger::globalInstance()->write(site.level, site.file, site.line,
+                                    site.function, site.category, msg);
+}
+
+DLogHelper::DLogHelper(Logger::LogLevel level, const QMessageLogContext &context, QObject *parent)
+    : QObject(parent)
+{
+    DLogSite site;
+    site.file = context.file;
+    site.line = context.line;
+    site.function = context.function;
+    site.category = context.category;
+    site.level = level;
+    new DLogHelperPrivate(site, this);
 }
 
 DLogHelper::~DLogHelper()
@@ -68,16 +80,14 @@ void DLogHelper::write(const char *msg, ...)
 
 void DLogHelper::write(const QString &msg)
 {
-    Q_D(DLogHelper);
-    Logger::globalInstance()->write(d->level, d->file, d->line,
-                                    d->function, d->category, msg);
+    writeSite(siteOf(this), msg);
 }
 
 QDebug DLogHelper::write()
 {
-    Q_D(DLogHelper);
-    return Logger::globalInstance()->write(d->level, d->file, d->line,
-                                           d->function, d->category);
+    const DLogSite &site = siteOf(this);
+    return Logger::globalInstance()->write(site.level, site.file, site.line,
+                                           site.function, site.category);
 }
 
 void DLogHelper::timing(const QString &msg, QObject *context /* = nullptr*/)
@@ -87,7 +97,9 @@ void DLogHelper::timing(const QString &msg, QObject *context /* = nullptr*/)
 
     QElapsedTimer *elapsedTimer = new QElapsedTimer;
     elapsedTimer->start();
-    QObject::connect(context, &QObject::destroyed, [elapsedTimer, msg, this]()
+    // Copy the site: the helper may already be gone when context is destroyed.
+    const DLogSite site = siteOf(this);
+    QObject::connect(context, &QObject::destroyed, [elapsedTimer, msg, site]()
                      {
         QString message;
         message = msg + (QLatin1String(" finished in "));
@@ -100,7 +112,7 @@ void DLogHelper::timing(const QString &msg, QObject *context /* = nullptr*/)
         else
             message += QString::number(elapsed) + QLatin1String("ms.");
 
-        write(message); });
+        writeSite(site, message); });
 }
 
 Logger::LogLevel DLogHelper::levelFromQtMsgType(QtMsgType mt)

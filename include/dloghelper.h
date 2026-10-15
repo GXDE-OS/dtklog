@@ -28,8 +28,6 @@ public:
 
     static Logger::LogLevel levelFromQtMsgType(QtMsgType mt);
     static QtMsgType qtMsgTypeFromLogLevel(Logger::LogLevel lvl);
-
-    Q_DECLARE_PRIVATE(DLogHelper)
 };
 
 DLOG_CORE_END_NAMESPACE

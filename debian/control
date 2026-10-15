@@ -8,9 +8,7 @@ Build-Depends: debhelper-compat ( =12),
     libspdlog-dev,
     libsystemd-dev,
     qtbase5-dev <!nodtk5>,
-    qtbase5-private-dev <!nodtk5>,
-    qt6-base-dev <!nodtk6>,
-    qt6-base-private-dev <!nodtk6>
+    qt6-base-dev <!nodtk6>
 Standards-Version: 3.9.8
 
 Package: libdtklog0

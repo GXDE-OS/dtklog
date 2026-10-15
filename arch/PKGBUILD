@@ -1,6 +1,6 @@
 pkgname=dtklog-git
 pkgver=6.7.43
-pkgrel=1
+pkgrel=2
 pkgdesc='DTK log modules'
 arch=('x86_64' 'aarch64')
 url="https://github.com/GXDE-OS/dtklog"

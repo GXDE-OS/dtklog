@@ -1,3 +1,9 @@
+dtklog (6.7.43-gxde2) unstable; urgency=medium
+
+  * Remove the dependency of Qt Private.
+
+ -- CharOfString <root@charofstring.cc>  Thu, 15 Oct 2026 09:12:04 -0500
+
 dtklog (6.7.43) unstable; urgency=medium
 
   * Release 6.7.43

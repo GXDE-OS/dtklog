@@ -1,4 +1,4 @@
-pkgname=dtklog-git
+pkgname=gxde-dtklog
 pkgver=6.7.43
 pkgrel=2
 pkgdesc='DTK log modules'
@@ -7,8 +7,9 @@ url="https://github.com/GXDE-OS/dtklog"
 license=('LGPL-2.1-or-later')
 depends=('qt5-base' 'spdlog' 'systemd-libs')
 makedepends=('git' 'cmake' 'ninja')
-provides=("dtklog=$pkgver")
-conflicts=('dtklog')
+provides=("dtklog=$pkgver" "dtklog-git=$pkgver")
+conflicts=('dtklog' 'dtklog-git')
+replaces=('dtklog-git')
 groups=('deepin-git')
 source=()
 sha512sums=()
